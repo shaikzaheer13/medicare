@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MediCare - Sign Up</title>
+    <link rel="stylesheet" href="style/style.css">
+</head>
+<body>
+
+<header>
+    <div class="logo">✚ MediCare</div>
+    <nav>
+        <a href="index.html">Home</a>
+        <a href="#">Doctors</a>
+        <a href="#">About</a>
+        <a href="login.html">Login</a>
+        <a href="signup.html" class="nav-btn">Sign Up</a>
+    </nav>
+</header>
+
+<div class="form-page">
+    <div class="form-box">
+        <h2>Create Account</h2>
+        <p>Join MediCare today</p>
+
+        <form>
+            <label>Full Name</label>
+            <input type="text" placeholder="Enter your name">
+
+            <label>Email</label>
+            <input type="email" placeholder="Enter your email">
+
+            <label>Password</label>
+            <input type="password" placeholder="Create a password">
+
+            <label>Account Type</label>
+            <select>
+                <option>Patient</option>
+                <option>Doctor</option>
+                <option>Admin</option>
+            </select>
+
+            <button type="submit">Create Account</button>
+        </form>
+
+        <p class="form-bottom">Already have an account?
+            <a href="login.html">Login</a>
+        </p>
+    </div>
+</div>
+<script>
+document.querySelector("form").addEventListener("submit", function(event) {
+    event.preventDefault();
+
+    let name = document.querySelectorAll("input")[0].value;
+    let email = document.querySelectorAll("input")[1].value;
+    let password = document.querySelectorAll("input")[2].value;
+    let role = document.querySelector("select").value;
+
+    let user = {
+        name: name,
+        email: email,
+        password: password,
+        role: role
+    };
+
+    let users = JSON.parse(localStorage.getItem("users")) || [];
+
+    users.push(user);
+
+    localStorage.setItem("users", JSON.stringify(users));
+
+    alert("Account created successfully!");
+    window.location.href = "login.html";
+});
+
+</script>
+</body>
+</html>

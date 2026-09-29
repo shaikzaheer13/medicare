@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MediCare - Login</title>
+    <link rel="stylesheet" href="style/style.css">
+</head>
+<body>
+
+<header>
+    <div class="logo">✚ MediCare</div>
+    <nav>
+        <a href="index.html">Home</a>
+        <a href="#">Doctors</a>
+        <a href="#">About</a>
+        <a href="login.html">Login</a>
+        <a href="signup.html" class="nav-btn">Sign Up</a>
+    </nav>
+</header>
+
+<div class="form-page">
+    <div class="form-box">
+        <h2>Welcome Back</h2>
+        <p>Login to manage your healthcare</p>
+
+        <form>
+            <label>Email</label>
+            <input type="email" placeholder="Enter your email" required>
+
+            <label>Password</label>
+            <input type="password" placeholder="Enter your password" required>
+
+            <button type="submit">Login</button>
+        </form>
+
+        <p class="form-bottom">Don't have an account?
+            <a href="signup.html">Sign Up</a>
+        </p>
+    </div>
+</div>
+
+<script>
+document.querySelector("form").addEventListener("submit", function(event) {
+    event.preventDefault();
+
+    let email = document.querySelectorAll("input")[0].value;
+    let password = document.querySelectorAll("input")[1].value;
+
+    let users = JSON.parse(localStorage.getItem("users")) || [];
+
+    let user = users.find(function(u) {
+        return u.email == email && u.password == password;
+    });
+
+    if (user) {
+        localStorage.setItem("loggedInUser", JSON.stringify(user));
+
+        alert("Login successful!");
+
+        if (user.role == "Patient") {
+            window.location.href = "patient.html";
+        } else if (user.role == "Doctor") {
+            window.location.href = "doctor.html";
+        } else if (user.role == "Admin") {
+            window.location.href = "admin.html";
+        }
+    } else {
+        alert("Invalid email or password!");
+    }
+});
+</script>
+
+</body>
+</html>

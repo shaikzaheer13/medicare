@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MediCare - Patient Dashboard</title>
+    <link rel="stylesheet" href="style/style.css">
+</head>
+<body>
+
+<header>
+    <div class="logo">✚ MediCare</div>
+    <nav>
+        <a href="index.html">Home</a>
+        <a href="#">Doctors</a>
+        <a href="#">Appointments</a>
+        <a href="#" onclick="logout()">Logout</a>
+    </nav>
+</header>
+
+<section class="dashboard">
+    <div class="dashboard-title">
+        <p>Patient Dashboard</p>
+        <h1>Welcome to MediCare</h1>
+        <p>Manage your appointments and find the right doctor.</p>
+    </div>
+
+    <div class="dashboard-cards">
+        <div class="dashboard-card">
+            <h3>Find a Doctor</h3>
+            <p>Search doctors by their specialization.</p>
+            <a href="#" class="card-btn">Find Doctor</a>
+        </div>
+
+        <div class="dashboard-card">
+            <h3>Book Appointment</h3>
+            <p>Choose a doctor and available time slot.</p>
+            <a href="appointment.html" class="card-btn">Book Now</a>
+        </div>
+
+        <div class="dashboard-card">
+            <h3>My Appointments</h3>
+            <p>View and manage your upcoming appointments.</p>
+            <a href="#" class="card-btn">View Appointments</a>
+        </div>
+    </div>
+
+    <div class="appointment-section">
+    <h2>My Appointments</h2>
+    <div id="appointmentList"></div>
+</div>
+</section>
+<script>
+let loggedInUser = JSON.parse(localStorage.getItem("loggedInUser"));
+let appointments = JSON.parse(localStorage.getItem("appointments")) || [];
+let appointmentList = document.getElementById("appointmentList");
+
+if (!loggedInUser) {
+    window.location.href = "login.html";
+}
+
+let myAppointments = appointments.filter(function(appointment) {
+    return appointment.patientEmail == loggedInUser.email;
+});
+
+if (myAppointments.length == 0) {
+    appointmentList.innerHTML = "<p>No appointments booked yet.</p>";
+} else {
+    myAppointments.forEach(function(appointment) {
+        appointmentList.innerHTML += `
+            <div class="appointment-box">
+                <div>
+                    <h3>${appointment.doctor}</h3>
+                    <p>Patient: ${appointment.patient}</p>
+                    <p>📅 ${appointment.date} &nbsp; ⏰ ${appointment.time}</p>
+                    <p>Reason: ${appointment.reason}</p>
+                </div>
+                <span class="status">${appointment.status}</span>
+            </div>
+        `;
+    });
+}
+</script>
+<script src="logout.js"></script>
+</body>
+</html>

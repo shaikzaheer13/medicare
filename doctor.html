@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MediCare - Doctor Dashboard</title>
+    <link rel="stylesheet" href="style/style.css">
+</head>
+<body>
+
+<header>
+    <div class="logo">✚ MediCare</div>
+    <nav>
+        <a href="index.html">Home</a>
+        <a href="#doctorAppointments">Appointments</a>
+        <a href="#doctorPatients">Patients</a>
+        <a href="login.html">Logout</a>
+    </nav>
+</header>
+
+<section class="dashboard">
+
+    <div class="dashboard-title">
+        <p>Doctor Dashboard</p>
+        <h1 id="doctorName">Welcome, Doctor</h1>
+        <p>Manage your appointments, patients and available slots.</p>
+    </div>
+
+    <div class="dashboard-cards">
+
+        <div class="dashboard-card">
+            <h3>Today's Appointments</h3>
+            <p class="number" id="todayAppointments">0</p>
+            <a href="#doctorAppointments" class="card-btn">View Appointments</a>
+        </div>
+
+        <div class="dashboard-card">
+            <h3>Available Slots</h3>
+            <p class="number">12</p>
+            <a href="#doctorSlots" class="card-btn">Manage Slots</a>
+        </div>
+
+        <div class="dashboard-card">
+            <h3>Total Patients</h3>
+            <p class="number" id="totalPatients">0</p>
+            <a href="#doctorPatients" class="card-btn">View Patients</a>
+        </div>
+
+    </div>
+
+    <div class="appointment-section" id="doctorAppointments">
+        <h2>My Appointments</h2>
+        <div id="appointmentList"></div>
+    </div>
+
+    <div class="appointment-section" id="doctorSlots">
+        <h2>Available Slots</h2>
+        <div class="appointment-box">
+            <div>
+                <h3>Available Time Slots</h3>
+                <p>10:00 AM</p>
+                <p>10:30 AM</p>
+                <p>11:00 AM</p>
+                <p>12:00 PM</p>
+                <p>2:00 PM</p>
+                <p>3:00 PM</p>
+            </div>
+            <span class="status">Available</span>
+        </div>
+    </div>
+
+    <div class="appointment-section" id="doctorPatients">
+        <h2>My Patients</h2>
+        <div id="patientList"></div>
+    </div>
+
+</section>
+
+<script>
+let loggedInUser = JSON.parse(localStorage.getItem("loggedInUser"));
+let appointments = JSON.parse(localStorage.getItem("appointments")) || [];
+
+if (!loggedInUser || loggedInUser.role != "Doctor") {
+    window.location.href = "login.html";
+}
+
+document.getElementById("doctorName").innerText = "Welcome, " + loggedInUser.name;
+
+let doctorAppointments = appointments.filter(function(appointment) {
+    return appointment.doctor == loggedInUser.name;
+});
+
+document.getElementById("todayAppointments").innerText = doctorAppointments.length;
+
+let patientList = document.getElementById("patientList");
+let patientEmails = [];
+
+doctorAppointments.forEach(function(appointment) {
+    if (!patientEmails.includes(appointment.patientEmail)) {
+        patientEmails.push(appointment.patientEmail);
+    }
+});
+
+document.getElementById("totalPatients").innerText = patientEmails.length;
+
+if (doctorAppointments.length == 0) {
+    document.getElementById("appointmentList").innerHTML = "<p>No appointments booked yet.</p>";
+    patientList.innerHTML = "<p>No patients yet.</p>";
+} else {
+    doctorAppointments.forEach(function(appointment) {
+        document.getElementById("appointmentList").innerHTML += `
+            <div class="appointment-box">
+                <div>
+                    <h3>${appointment.patient}</h3>
+                    <p>📅 ${appointment.date} &nbsp; ⏰ ${appointment.time}</p>
+                    <p>Reason: ${appointment.reason}</p>
+                </div>
+                <span class="status">${appointment.status}</span>
+            </div>
+        `;
+
+        patientList.innerHTML += `
+            <div class="appointment-box">
+                <div>
+                    <h3>${appointment.patient}</h3>
+                    <p>Email: ${appointment.patientEmail}</p>
+                    <p>Appointment: ${appointment.date} &nbsp; ${appointment.time}</p>
+                </div>
+                <span class="status">Patient</span>
+            </div>
+        `;
+    });
+}
+</script>
+
+<script src="logout.js"></script>
+
+</body>
+</html>

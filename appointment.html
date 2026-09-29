@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MediCare - Book Appointment</title>
+    <link rel="stylesheet" href="style/style.css">
+</head>
+<body>
+
+<header>
+    <div class="logo">✚ MediCare</div>
+    <nav>
+        <a href="index.html">Home</a>
+        <a href="patient.html">Dashboard</a>
+        <a href="login.html">Logout</a>
+    </nav>
+</header>
+
+<div class="form-page">
+    <div class="form-box">
+        <h2>Book Appointment</h2>
+        <p>Choose a doctor and appointment time</p>
+
+        <form id="appointmentForm">
+            <label>Doctor</label>
+            <select id="doctor" required>
+                <option value="">Select Doctor</option>
+            </select>
+
+            <label>Date</label>
+            <input type="date" id="date" required>
+
+            <label>Time</label>
+            <select id="time" required>
+                <option value="">Select Time</option>
+                <option value="10:00 AM">10:00 AM</option>
+                <option value="10:30 AM">10:30 AM</option>
+                <option value="11:00 AM">11:00 AM</option>
+                <option value="12:00 PM">12:00 PM</option>
+                <option value="2:00 PM">2:00 PM</option>
+                <option value="3:00 PM">3:00 PM</option>
+            </select>
+
+            <label>Reason for Visit</label>
+            <input type="text" id="reason" placeholder="Enter reason for visit" required>
+
+            <button type="submit">Book Appointment</button>
+        </form>
+
+        <p class="form-bottom">
+            <a href="patient.html">Back to Dashboard</a>
+        </p>
+    </div>
+</div>
+
+<script>
+let loggedInUser = JSON.parse(localStorage.getItem("loggedInUser"));
+let users = JSON.parse(localStorage.getItem("users")) || [];
+
+if (!loggedInUser || loggedInUser.role != "Patient") {
+    alert("Please login as a patient first.");
+    window.location.href = "login.html";
+}
+
+let doctorSelect = document.getElementById("doctor");
+
+let doctors = users.filter(function(user) {
+    return user.role == "Doctor";
+});
+
+doctors.forEach(function(doctor) {
+    let option = document.createElement("option");
+    option.value = doctor.name;
+    option.textContent = doctor.name;
+    doctorSelect.appendChild(option);
+});
+
+let today = new Date();
+let year = today.getFullYear();
+let month = String(today.getMonth() + 1).padStart(2, "0");
+let day = String(today.getDate()).padStart(2, "0");
+
+document.getElementById("date").min = year + "-" + month + "-" + day;
+
+document.getElementById("appointmentForm").addEventListener("submit", function(event) {
+    event.preventDefault();
+
+    let doctor = document.getElementById("doctor").value;
+    let date = document.getElementById("date").value;
+    let time = document.getElementById("time").value;
+    let reason = document.getElementById("reason").value;
+
+    let selectedDate = new Date(date);
+    let currentDate = new Date();
+    currentDate.setHours(0, 0, 0, 0);
+
+    if (selectedDate < currentDate) {
+        alert("Please select today or a future date.");
+        return;
+    }
+
+    let appointments = JSON.parse(localStorage.getItem("appointments")) || [];
+
+    let alreadyBooked = appointments.some(function(appointment) {
+        return appointment.doctor == doctor &&
+               appointment.date == date &&
+               appointment.time == time;
+    });
+
+    if (alreadyBooked) {
+        alert("This time slot is already booked. Please select another time.");
+        return;
+    }
+
+    let appointment = {
+        patient: loggedInUser.name,
+        patientEmail: loggedInUser.email,
+        doctor: doctor,
+        date: date,
+        time: time,
+        reason: reason,
+        status: "Confirmed"
+    };
+
+    appointments.push(appointment);
+
+    localStorage.setItem("appointments", JSON.stringify(appointments));
+
+    alert("Appointment booked successfully!");
+
+    window.location.href = "patient.html";
+});
+</script>
+
+<script src="logout.js"></script>
+
+</body>
+</html> 

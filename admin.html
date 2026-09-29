@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MediCare - Admin Dashboard</title>
+    <link rel="stylesheet" href="style/style.css">
+</head>
+<body>
+
+<header>
+    <div class="logo">✚ MediCare</div>
+    <nav>
+        <a href="index.html">Home</a>
+        <a href="#patientList">Patients</a>
+        <a href="#doctorList">Doctors</a>
+        <a href="#appointmentList">Appointments</a>
+        <a href="login.html">Logout</a>
+    </nav>
+</header>
+
+<section class="dashboard">
+
+    <div class="dashboard-title">
+        <p>Admin Dashboard</p>
+        <h1>Welcome, Admin</h1>
+        <p>Manage patients, doctors and appointments.</p>
+    </div>
+
+    <div class="dashboard-cards">
+
+        <div class="dashboard-card">
+            <h3>Total Patients</h3>
+            <p class="number" id="totalPatients">0</p>
+            <a href="#patientList" class="card-btn">View Patients</a>
+        </div>
+
+        <div class="dashboard-card">
+            <h3>Total Doctors</h3>
+            <p class="number" id="totalDoctors">0</p>
+            <a href="#doctorList" class="card-btn">View Doctors</a>
+        </div>
+
+        <div class="dashboard-card">
+            <h3>Total Appointments</h3>
+            <p class="number" id="totalAppointments">0</p>
+            <a href="#appointmentList" class="card-btn">View Appointments</a>
+        </div>
+
+    </div>
+
+    <div class="appointment-section" id="patientList">
+        <h2>Patients</h2>
+        <div id="patients"></div>
+    </div>
+
+    <div class="appointment-section" id="doctorList">
+        <h2>Doctors</h2>
+        <div id="doctors"></div>
+    </div>
+
+    <div class="appointment-section" id="appointmentList">
+        <h2>Appointments</h2>
+        <div id="appointments"></div>
+    </div>
+
+</section>
+
+<script>
+let loggedInUser = JSON.parse(localStorage.getItem("loggedInUser"));
+let users = JSON.parse(localStorage.getItem("users")) || [];
+let appointments = JSON.parse(localStorage.getItem("appointments")) || [];
+
+if (!loggedInUser || loggedInUser.role != "Admin") {
+    window.location.href = "login.html";
+}
+
+let patients = users.filter(function(user) {
+    return user.role == "Patient";
+});
+
+let doctors = users.filter(function(user) {
+    return user.role == "Doctor";
+});
+
+document.getElementById("totalPatients").innerText = patients.length;
+document.getElementById("totalDoctors").innerText = doctors.length;
+document.getElementById("totalAppointments").innerText = appointments.length;
+
+let patientList = document.getElementById("patients");
+
+if (patients.length == 0) {
+    patientList.innerHTML = "<p>No patients registered.</p>";
+} else {
+    patients.forEach(function(patient) {
+        patientList.innerHTML += `
+            <div class="appointment-box">
+                <div>
+                    <h3>${patient.name}</h3>
+                    <p>Email: ${patient.email}</p>
+                </div>
+                <span class="status">Patient</span>
+            </div>
+        `;
+    });
+}
+
+let doctorList = document.getElementById("doctors");
+
+if (doctors.length == 0) {
+    doctorList.innerHTML = "<p>No doctors registered.</p>";
+} else {
+    doctors.forEach(function(doctor) {
+        doctorList.innerHTML += `
+            <div class="appointment-box">
+                <div>
+                    <h3>${doctor.name}</h3>
+                    <p>Email: ${doctor.email}</p>
+                </div>
+                <span class="status">Doctor</span>
+            </div>
+        `;
+    });
+}
+
+let appointmentList = document.getElementById("appointments");
+
+if (appointments.length == 0) {
+    appointmentList.innerHTML = "<p>No appointments available.</p>";
+} else {
+    appointments.forEach(function(appointment) {
+        appointmentList.innerHTML += `
+            <div class="appointment-box">
+                <div>
+                    <h3>${appointment.patient}</h3>
+                    <p>Doctor: ${appointment.doctor}</p>
+                    <p>📅 ${appointment.date} &nbsp; ⏰ ${appointment.time}</p>
+                    <p>Reason: ${appointment.reason}</p>
+                </div>
+                <span class="status">${appointment.status}</span>
+            </div>
+        `;
+    });
+}
+</script>
+
+</body>
+</html>
